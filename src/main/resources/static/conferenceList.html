@@ -21,7 +21,7 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
 
 </head>
-<body ng-app="confListApp" ng-controller="confListCtrl" data-ng-init="onLoad()">
+<body ng-app="confListApp" ng-controller="confListCtrl" >
 <div class="navbar navbar-inverse set-radius-zero" >
     <div class="container">
         <div class="navbar-header">
@@ -34,11 +34,13 @@
 
                 <!--<img src="assets/img/logo.png" />-->
             <!--</a>-->
-            <h1>学术会议系统</h1>
+            <h1>学术会议系统<span ng-if="isLogin" ng-bind-template="欢迎您：{{user.name}}"></span></h1>
         </div>
 
         <div class="right-div">
-            <a  class="btn btn-info pull-right" ng-click="logout()">LOG ME OUT</a>
+            <a href="login.html" ng-if="!isLogin" class="btn btn-info" ng-click="logout()">LOG IN</a>
+            <a ng-if="isLogin" class="btn btn-info" ng-click="logout()">LOG ME OUT</a>
+
         </div>
     </div>
 </div>
@@ -49,10 +51,10 @@
             <div class="col-md-12">
                 <div class="navbar-collapse collapse ">
                     <ul id="menu-top" class="nav navbar-nav navbar-right">
-                        <li><a href="index.html" >首页</a></li>
-                        <li><a href="conferenceList.html"  class="menu-top-active">会议</a></li>
-                        <li><a href="paperList.html" > 论文</a></li>
-                        <li><a href="userInfo.html" >个人中心</a></li>
+                        <li><a href="index.html" class="fa fa-home">首页</a></li>
+                        <li><a href="conferenceList.html" class="menu-top-active fa fa-comments" >会议</a></li>
+                        <li><a href="paperList.html" class="fa fa-book" > 论文</a></li>
+                        <li><a href="userInfo.html" class=" fa fa-user">个人中心</a></li>
 
                     </ul>
                 </div>
@@ -84,7 +86,7 @@
                                 <thead>
                                 <tr>
                                     <th>会议名称</th>
-                                    <th>会议时间</th>
+                                    <th>会议创建时间</th>
                                     <th>会议地点</th>
                                     <th>会议创建者</th>
                                 </tr>
@@ -108,7 +110,7 @@
                 <!--End Advanced Tables -->
             </div>
             <div class="col-md-2">
-                <a href="/createConference.html" class="btn btn-primary">创建我的会议</a>
+                <a ng-if="isLogin" href="/createConference.html" class="btn btn-primary">创建我的会议</a>
 
             </div>
         </div>
@@ -139,31 +141,57 @@
         var token=$cookieStore.get('token');
         // alert("success");
         // alert(token);
-        function renderTime(date) {
-            var dateee = new Date(date).toJSON();
-            return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        }
+        // function renderTime(date) {
+        //     var dateee = new Date(date).toJSON();
+        //     return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+        // }
 
-        $scope.onLoad=function() {
+        $scope.isLogin = false;
+
+        $http({
+            method:'GET',
+            url: 'http://'+myHost+'/user/simpleshow',
+            headers:{
+                "Authorization":token
+            }
+        }).then(function successCallback(reponse) {
+            // alert("success");
+
+            $scope.user = reponse.data.data;
+            $scope.isLogin = true;
+        },function errorCallback(reponse) {
+
+            $scope.isLogin = false;
+            // window.location.href = 'login.html';
+            // alert('请先登录');
+            // alert('error');
+        });
+
+        // $scope.onLoad=function() {
             $http({
                 method: 'GET',
-                url: 'http://'+myHost+'/conference/all',
-                headers: {
-                    "Authorization": token
-                }
+                url: 'http://'+myHost+'/conference/all'
             }).then(function successCallback(reponse) {
                 // alert("success");
                 $scope.confs = reponse.data.data;
 
             }, function errorCallback(reponse) {
                 // alert('error');
+                // window.location.href = 'login.html';
+                // alert('请先登录');
             });
 
             $scope.logout = function () {
                 $cookieStore.remove("token");
                 window.location.href = "/login.html";
             }
-        };
+        // };
+
+        $scope.logout=function () {
+            $cookieStore.remove("token");
+            window.location.href="/login.html";
+        }
+
     });
 </script>
 

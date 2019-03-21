@@ -38,7 +38,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <h1>学术会议系统</h1>
+            <h1>学术会议系统欢迎您：<span ng-bind="user.name"></span></h1>
 
         </div>
 
@@ -54,9 +54,9 @@
             <div class="col-md-12">
                 <div class="navbar-collapse collapse ">
                     <ul id="menu-top" class="nav navbar-nav navbar-right">
-                        <li><a href="index.html" >首页</a></li>
-                        <li><a href="conferenceList.html"  >会议</a></li>
-                        <li><a href="paperList.html" > 论文</a></li>
+                        <li><a href="index.html" class="fa fa-home">首页</a></li>
+                        <li><a href="conferenceList.html" class="fa fa-comments" >会议</a></li>
+                        <li><a href="paperList.html" class="fa fa-book" > 论文</a></li>
                         <li><a href="userInfo.html" class="menu-top-active fa fa-user">个人中心</a></li>
 
 
@@ -97,10 +97,48 @@
             </div>
 
             <div class="col-md-2">
-                <button class="btn btn-success">修改密码</button>
+                <a href="modifyPassword.html" class="btn btn-success">修改密码</a>
                 <!--<hr/>-->
 
             </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10">
+                <!-- Advanced Tables -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        创建的会议信息
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover" id="dataTables-examples">
+                                <thead>
+                                <tr>
+                                    <th>会议名称</th>
+                                    <th>会议创建时间</th>
+                                    <th>会议地点</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in createConference" class="odd gradeX">
+                                    <td><a href="conferenceInfo.html?{{x.id}}" ng-bind="x.name"></a></td>
+                                    <td ng-bind="x.date| date: 'yyyy-MM-dd HH:mm'"></td>
+                                    <td class="center" ng-bind="x.address"></td>
+                                    <td><button class="btn btn-sm" ng-click="comfirmDelete(x.id)">删除会议</button></td>
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!--End Advanced Tables -->
+            </div>
+
         </div>
 
         <div class="row">
@@ -116,7 +154,7 @@
                                 <thead>
                                 <tr>
                                     <th>会议名称</th>
-                                    <th>会议时间</th>
+                                    <th>会议创建时间</th>
                                     <th>会议地点</th>
                                 </tr>
                                 </thead>
@@ -139,43 +177,6 @@
 
         </div>
 
-        <div class="row">
-            <div class="col-md-10">
-                <!-- Advanced Tables -->
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        创建的会议信息
-                    </div>
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover" id="dataTables-examples">
-                                <thead>
-                                <tr>
-                                    <th>会议名称</th>
-                                    <th>会议时间</th>
-                                    <th>会议地点</th>
-                                    <th>操作</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="x in createConference" class="odd gradeX">
-                                    <td><a href="conferenceInfo.html?{{x.id}}" ng-bind="x.name"></a></td>
-                                    <td ng-bind="x.date| date: 'yyyy-MM-dd HH:mm'"></td>
-                                    <td class="center" ng-bind="x.address"></td>
-                                    <td><button class="btn btn-sm">删除会议</button></td>
-                                </tr>
-
-
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-                <!--End Advanced Tables -->
-            </div>
-
-        </div>
 
         <div class="row">
             <div class="col-md-10">
@@ -191,16 +192,19 @@
                                 <tr>
                                     <th>论文标题</th>
                                     <th>提交时间</th>
-                                    <th>论文评论</th>
+                                    <th>所属会议</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="x in papers" class="odd gradeX">
-                                    <td><a href="#" ng-bind="x.paperTilte"></a></td>
+                                    <td><a href="paperInfo.html?{{x.paperId}}" ng-bind="x.paperTilte"></a></td>
                                     <td ng-bind="x.paperSubmitTime | date: 'yyyy-MM-dd HH:mm'"></td>
-                                    <td class="center" ng-bind="x.paperComment"></td>
-                                    <td><button class="btn btn-sm" ng-click="getExcel(x.paperId)">下载论文</button> </td>
+                                    <td ng-bind="x.conferenceName"></td>
+                                    <td>
+                                        <button class="btn btn-sm" ng-click="download(x.paperId)">下载论文</button>
+                                        <button class="btn btn-sm" ng-click="deletePaper(x.paperId)">删除论文</button>
+                                    </td>
                                 </tr>
 
 
@@ -237,13 +241,12 @@
     app.controller('userInfoCtrl',function ($scope,$http,$cookieStore) {
         var token=$cookieStore.get('token');
         // alert("success");
-        var host = "liuyuxin.xyz";
 
         $scope.onLoad=function ()
         {
             $http({
                 method: 'GET',
-                url: 'http://localhost:8080/user/simpleshow',
+                url: 'http://'+myHost+'/user/simpleshow',
                 headers: {
                     "Authorization": token
                 }
@@ -253,13 +256,15 @@
 
                 $scope.conference = $scope.user.conferenceSet;
             }, function errorCallback(reponse) {
+                window.location.href = 'login.html';
+                alert('请先登录');
                 // alert('error');
 
             });
 
             $http({
                 method: 'GET',
-                url: 'http://localhost:8080/user/show/create',
+                url: 'http://'+myHost+'/user/show/create',
                 headers: {
                     "Authorization": token
                 }
@@ -269,42 +274,33 @@
                 // alert('error');
             });
 
+
+            // 找出用户所有的论文
             $http({
                 method: 'GET',
-                url: 'http://localhost:8080/paper/user',
+                url: 'http://'+myHost+'/paper/user',
                 headers: {
                     "Authorization": token
                 }
             }).then(function successCallback(reponse) {
                 $scope.papers = reponse.data.data;
             });
-        }
+
+        };
 
 
 
         $scope.logout=function () {
             $cookieStore.remove("token");
             window.location.href="/login.html";
-        }
-
-        $scope.download = function(id){
-            alert(id);
-            $http({
-                method:'GET',
-                url:'http://'+myHost+'/file/download/'+id+"?username=test",
-                headers:{
-                    "Authorization":token,
-                    "Content-Type":"application/x-download"
-                }
-            }).then(function successCallback(reponse) {
-                $scope.papers=reponse.data.data;
-                alert("success")
-            },function errorCallback(reponse) {
-                alert("error");
-            });
+        };
+        $scope.logout=function () {
+            $cookieStore.remove("token");
+            window.location.href="/login.html";
         };
 
-        $scope.getExcel = function (id) {
+
+        $scope.download = function (id) {
             $http({
                 method:'get',
                 url:'http://'+myHost+'/file/download/'+id+'?username=test',
@@ -317,6 +313,8 @@
                 var blob = new Blob([response.data], {type: "application/x-download"});   // vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
                 // var fileName = response.headers("Content-Disposition");
 
+
+                // 通过字符编码转换解决中文乱码问题
                 var fileName = response.headers("Content-Disposition").split(";")[1].split("filename=")[1];
 
                 var fileNameUnicode = response.headers("Content-Disposition").split("filename*=")[1];
@@ -330,9 +328,73 @@
                 a.download = fileName;
                 a.href = URL.createObjectURL(blob);
                 a.click();
+                a.remove();
             },function errorCallback(response) {
                 alert("error");
             })
+        };
+        
+        $scope.comfirmDelete=function (conferenceId) {
+            //利用对话框返回的值 （true 或者 false）
+            if (confirm("你确定要删除吗？")) {
+                $http({
+                    method: 'GET',
+                    url: 'http://'+myHost+'/conference/delete/'+conferenceId,
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(function successCallback(reponse) {
+                    if(reponse.data.msg =="删除失败"){
+                        alert("删除失败");
+
+                    }
+                    else if(reponse.data.httpStatus == "OK"){
+
+                        alert("success");
+                        window.location.reload();
+                    }
+                    else if(reponse.data.msg == "你没有权限删除"){
+                        alert("你没有权限删除");
+                    }
+                }, function errorCallback(reponse) {
+                    alert('error');
+                });
+
+            }
+            else {
+
+            }
+        };
+
+        $scope.deletePaper = function (paperId) {
+            if (confirm("你确定要删除吗？")) {
+                $http({
+                    method: 'GET',
+                    url: 'http://'+myHost+'/paper/delete/'+paperId,
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(function successCallback(reponse) {
+                    if(reponse.data.msg =="删除失败"){
+                        alert("删除失败");
+
+                    }
+                    else if(reponse.data.httpStatus == "OK"){
+
+                        alert("success");
+                        window.location.reload();
+                    }
+                    else if(reponse.data.msh == "你没有权限删除"){
+                        alert("你没有权限删除");
+                    }
+                }, function errorCallback(reponse) {
+                    alert('error');
+                });
+
+            }
+            else {
+
+            }
         }
 
     });

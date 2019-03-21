@@ -21,7 +21,7 @@
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
 
 </head>
-<body ng-app="createConfApp" ng-controller="createConfCtrl">
+<body ng-app="modifyConfApp" ng-controller="modifyConfCtrl">
 <div class="navbar navbar-inverse set-radius-zero" >
     <div class="container">
         <div class="navbar-header">
@@ -50,10 +50,10 @@
             <div class="col-md-12">
                 <div class="navbar-collapse collapse ">
                     <ul id="menu-top" class="nav navbar-nav navbar-right">
-                        <li><a href="index.html" class="fa fa-home">首页</a></li>
-                        <li><a href="conferenceList.html" class="menu-top-active fa fa-comments" >会议</a></li>
-                        <li><a href="paperList.html" class="fa fa-book" > 论文</a></li>
-                        <li><a href="userInfo.html" class=" fa fa-user">个人中心</a></li>
+                        <li><a href="index.html" >首页</a></li>
+                        <li><a href="conferenceList.html" class="menu-top-active">会议</a></li>
+                        <li><a href="paperList.html" > 论文</a></li>
+                        <li><a href="userInfo.html" >个人中心</a></li>
 
 
 
@@ -85,7 +85,7 @@
 
                     <div class="form-group">
                         <label>Enter Conference Name</label>
-                        <input class="form-control" type="text"  ng-model="confName"/>
+                        <input class="form-control" type="text"  ng-model="confName" />
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
@@ -121,7 +121,7 @@
 
                         <hr/>
                         <div>
-                            <button ng-click="createConf()" class="btn btn-primary">创建会议</button>
+                            <button ng-click="modifyConf()" class="btn btn-primary">修改会议</button>
 
                         </div>
             </div>
@@ -159,12 +159,12 @@
 <script src="https://code.angularjs.org/1.6.9/angular-cookies.js"></script>
 <script src="assets/js/my.js"></script>
 <script>
-    app = angular.module('createConfApp',['ngCookies']);
-    app.controller('createConfCtrl',function ($scope,$http,$cookieStore) {
+    app = angular.module('modifyConfApp',['ngCookies']);
+    app.controller('modifyConfCtrl',function ($scope,$http,$cookieStore) {
         var token=$cookieStore.get('token');
-        // alert("success");
-        // alert(token);
-        $scope.myValue={};
+        var url = window.location.search;
+        var conferenceId = url.substr(1);
+
         $http({
             method: 'GET',
             url: 'http://'+myHost+'/user/simpleshow',
@@ -175,25 +175,48 @@
 
             $scope.user = reponse.data.data;
 
+            $scope.conference = $scope.user.conferenceSet;
         }, function errorCallback(reponse) {
             window.location.href = 'login.html';
             alert('请先登录');
-            alert('error');
+            // alert('error');
+
         });
 
-        $scope.createConf=function() {
-            var createDate = new Date();
+        $http({
+            method: 'GET',
+            url: 'http://'+myHost+'/conference/details?conferenceId=' + conferenceId,
+            headers: {
+                "Authorization": token
+            }
+        }).then(function successCallback(reponse) {
+
+            $scope.conference = reponse.data.data;
+
+            $scope.confName = $scope.conference.name;
+            $scope.confAddr = $scope.conference.address;
+            $scope.contName = $scope.conference.contactName;
+            $scope.contEmail = $scope.conference.contactEmail;
+            $scope.contPhone = $scope.conference.contactPhone;
+            $scope.description = $scope.conference.description;
+
+        }, function errorCallback(reponse) {
+            window.location.href = 'login.html';
+            alert('请先登录');
+            // alert('error');
+        });
+
+        $scope.modifyConf=function() {
+            // var createDate = new Date();
             $http({
                 method: 'post',
-                url: 'http://'+myHost+'/conference/create',
+                url: 'http://'+myHost+'/conference/modify/'+conferenceId,
                 headers:{
                     "Authorization": token
                 },
                 data: {
                     "name": $scope.confName,
                     "address": $scope.confAddr,
-                    "createName":$scope.user.name,
-                    "date":createDate,
                     "description":$scope.description,
                     "contactName":$scope.contName,
                     "contactEmail":$scope.contEmail,
@@ -201,7 +224,7 @@
                 }
             }).then(function successCallback(reponse) {
                 alert("success");
-                window.location.href="/conferenceList.html";
+                window.location.href="/conferenceInfo.html?" + conferenceId;
             }, function errorCallback(reponse) {
                 alert('error');
             })

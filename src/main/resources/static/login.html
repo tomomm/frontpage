@@ -37,9 +37,9 @@
             <h1>学术会议系统</h1>
         </div>
 
-        <div class="right-div">
-            <a href="signup.html" class="btn btn-info pull-right">SIGN UP</a>
-            <a href="login.html" class="btn btn-info pull-right">LOGIN</a>
+        <div class="btn-group right-div" role="group">
+            <a href="signup.html" class="btn btn-danger">SIGN UP</a>
+            <a href="login.html" class="btn btn-info">LOGIN</a>
 
         </div>
     </div>
@@ -51,11 +51,10 @@
             <div class="col-md-12">
                 <div class="navbar-collapse collapse ">
                     <ul id="menu-top" class="nav navbar-nav navbar-right">
-                        <li><a href="index.html" >首页</a></li>
-
-                        <li><a href="conferenceList.html"  >会议</a></li>
-                        <li><a href="tab.html" > 论文</a></li>
-                        <li><a href="userInfo.html">个人中心</a></li>
+                        <li><a href="index.html" class="fa fa-home">首页</a></li>
+                        <li><a href="conferenceList.html" class="fa fa-comments" >会议</a></li>
+                        <li><a href="paperList.html" class="fa fa-book" > 论文</a></li>
+                        <li><a href="userInfo.html" class=" fa fa-user">个人中心</a></li>
 
 
                     </ul>
@@ -97,7 +96,7 @@
                     </div>
 
                         <a href="signup.html">注册</a>
-                        <a href="recoveryPassword.html">忘记密码?</a>
+                        <a href="forgetPassword.html">忘记密码?</a>
                     <div>
                         <button  ng-click="func()" class="btn btn-danger">Login </button>
                     </div>
@@ -121,8 +120,8 @@
 </section>
 <!-- FOOTER SECTION END-->
 <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
-<script src="http://code.angularjs.org/1.2.9/angular.min.js"></script>
-<script src="https://code.angularjs.org/1.2.9/angular-cookies.js"></script>
+<script src="webjars/angularjs/1.6.9/angular.js"></script>
+<script src="webjars/angularjs/1.6.9/angular-cookies.js"></script>
 <script src="assets/js/my.js"></script>
 <script>
     var app = angular.module('loginApp',['ngCookies']);
@@ -157,11 +156,11 @@
                         expires: new Date(new Date().getTime() + 50000)
                     });
                     // alert("sss"+$cookieStore.get('token'))
-                    window.location.href = "conferenceList.html"
+                    window.location.href = "userInfo.html"
 
                 },
                 function errorCallback(response) {
-                    alert("error");
+                    // alert("error");
                     alert(response.data.data);
                 });
         }

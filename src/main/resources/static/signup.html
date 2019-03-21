@@ -50,12 +50,10 @@
             <div class="col-md-12">
                 <div class="navbar-collapse collapse ">
                     <ul id="menu-top" class="nav navbar-nav navbar-right">
-                        <li><a href="index.html" >首页</a></li>
-                        <li><a href="conferenceList.html">会议</a></li>
-                        <li><a href="paperList.html" > 论文</a></li>
-                        <li><a href="userInfo.html" >个人中心</a></li>
-
-
+                        <li><a href="index.html" class="fa fa-home">首页</a></li>
+                        <li><a href="conferenceList.html" class="fa fa-comments" >会议</a></li>
+                        <li><a href="paperList.html" class="fa fa-book" > 论文</a></li>
+                        <li><a href="userInfo.html" class=" fa fa-user">个人中心</a></li>
 
                     </ul>
                 </div>
@@ -113,6 +111,7 @@
                     <div>
                         <label>Re Type Password </label>
                         <input class="form-control"  type="password" ng-model="repassword" name="repassword" id="pwd2" required/>
+                        <span ng-show="repassword!=password" style="color:red">两次输入的密码不相同.</span>
                         <!--<span style="color:red" ng-show="signupForm.password.$error.required">两侧输入的密码不相同.</span>-->
                     </div>
 
@@ -163,24 +162,30 @@
         // alert(token);
         $scope.myValue={};
         $scope.signup=function() {
-            $http({
-                method: 'post',
-                url: 'http://'+myHost+'/user/signup?smscode='+$scope.sms,
-                headers:{
-                    "Content-Type":"application/json;charset=UTF-8"
-                },
-                data: {
-                    "name": $scope.username,
-                    "password": $scope.password,
-                    "phone": $scope.phone,
-                    "email": $scope.myemail
-                }
-            }).then(function successCallback(reponse) {
-                alert("success");
-                window.location.href="login.html";
-            }, function errorCallback(reponse) {
-                alert('error');
-            })
+            if($scope.username &&$scope.password&&$scope.phone && $scope.myemail && $scope.repassword && $scope.sms){
+                $http({
+                    method: 'post',
+                    url: 'http://'+myHost+'/user/signup?smscode='+$scope.sms,
+                    headers:{
+                        "Content-Type":"application/json;charset=UTF-8"
+                    },
+                    data: {
+                        "name": $scope.username,
+                        "password": $scope.password,
+                        "phone": $scope.phone,
+                        "email": $scope.myemail
+                    }
+                }).then(function successCallback(reponse) {
+                    alert("success");
+                    window.location.href="login.html";
+                }, function errorCallback(reponse) {
+                    alert('error');
+                });
+            }
+            else {
+                alert("还有字段没填写完");
+            }
+
         };
 
         $scope.getSmsCode=function () {

@@ -34,11 +34,11 @@
 
                 <!--<img src="assets/img/logo.png" />-->
             <!--</a>-->
-            <h1>学术会议系统</h1>
+            <h1>学术会议系统欢迎您：<span ng-bind="user.name"></span></h1>
         </div>
 
         <div class="right-div">
-            <a href="#" class="btn btn-info pull-right">LOG ME OUT</a>
+            <a href="#" class="btn btn-info pull-right" ng-click="logout()">LOG ME OUT</a>
         </div>
     </div>
 </div>
@@ -49,19 +49,11 @@
             <div class="col-md-12">
                 <div class="navbar-collapse collapse ">
                     <ul id="menu-top" class="nav navbar-nav navbar-right">
-                        <li><a href="index.html" >DASHBOARD</a></li>
+                        <li><a href="index.html" class="fa fa-home">首页</a></li>
+                        <li><a href="conferenceList.html" class="fa fa-comments" >会议</a></li>
+                        <li><a href="paperList.html" class="menu-top-active fa fa-book" > 论文</a></li>
+                        <li><a href="userInfo.html" class=" fa fa-user">个人中心</a></li>
 
-                        <li><a href="form.html">FORMS</a></li>
-                        <li>
-                            <a href="#" class="dropdown-toggle" id="ddlmenuItem" data-toggle="dropdown">UI ELEMENTS <i class="fa fa-angle-down"></i></a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="ddlmenuItem">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="ui.html">UI ELEMENTS</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">EXAMPLE LINK</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="tab.html" > TABS & PANELS</a></li>
-                        <li><a href="conferenceList.html"  >会议</a></li>
-                        <li><a href="userInfo.html" class="menu-top-active">个人中心</a></li>
 
                     </ul>
                 </div>
@@ -73,36 +65,32 @@
 <!-- MENU SECTION END-->
 <div class="content-wrapper">
     <div class="container">
-        <div class="row pad-botm">
-            <div class="col-md-12">
-                <h4 class="header-line">TABLE EXAMPLES</h4>
+        <!--<div class="row pad-botm">-->
+            <!--<div class="col-md-12">-->
+                <!--<h4 class="header-line">TABLE EXAMPLES</h4>-->
 
-            </div>
+            <!--</div>-->
 
-        </div>
+        <!--</div>-->
         <div class="row">
             <div class="col-md-10">
                 <!-- Advanced Tables -->
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        会议信息
+                        论文信息
                     </div>
                     <div class="panel-body">
-                        <h2>会议名称</h2>
-                        <p>会议日期</p>
-                        <p>会议地点</p>
+                        <h2>论文标题：<span ng-bind="paper.paperTilte"></span></h2>
+                        <p>论文提交用户： <span ng-bind="paper.userName"></span></p>
+                        <p>论文提交时间: <span ng-bind="paper.paperSubmitTime |date:'yyyy-MM-dd HH:mm'"></span></p>
+                        <p>论文下载 <span><button class="btn btn-sm" ng-click="download(x.paperId)">下载论文</button></span></p>
+                        <p>论文评论<span ng-bind="paper.paperComment"></span></p>
 
                     </div>
                 </div>
                 <!--End Advanced Tables -->
             </div>
 
-            <div class="col-md-2">
-                <button class="btn btn-success">我要参加</button>
-                <hr/>
-                <button class="btn btn-success">我要投稿</button>
-
-            </div>
         </div>
 
 
@@ -111,11 +99,11 @@
 <!-- CONTENT-WRAPPER SECTION END-->
 <section class="footer-section">
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                &copy; 2014 Yourdomain.com | More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></div>
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--&copy; 2014 Yourdomain.com | More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></div>-->
 
-        </div>
+        <!--</div>-->
     </div>
 </section>
 <!-- FOOTER SECTION END-->
@@ -130,24 +118,49 @@
 
     app.controller("paperInfoCtrl",function($scope,$http,$cookieStore){
         var url = window.location.search;
-        var str = url.substr(1);
-        var token=$cookieStore.get('token');
-        strUrl='http://localhost:8080/paper/details?conferenceId='+str;
+        var paperId = url.substr(1);
+        var token = $cookieStore.get('token');
+
+        strUrl='http://'+myHost+'/paper/details?paperId=' + paperId;
 
         $http({
             method: 'GET',
-            url: strUrl,
+            url: 'http://'+myHost+'/user/simpleshow',
+            headers: {
+                "Authorization": token
+            }
+        }).then(function successCallback(reponse) {
+
+            $scope.user = reponse.data.data;
+
+            $scope.conference = $scope.user.conferenceSet;
+        }, function errorCallback(reponse) {
+            window.location.href = 'login.html';
+            alert('请先登录');
+            // alert('error');
+
+        });
+
+        $http({
+            method: 'GET',
+            url: 'http://'+myHost+'/paper/details?paperId=' + paperId,
             headers:{
                 "Authorization":token
             }
         }).then(function successCallback(response) {
-            // alert('success');
             $scope.paper = response.data.data;
 
         }, function errorCallback(response) {
+            window.location.href = 'login.html';
+            alert('请先登录');
             // 请求失败执行代码
-            alert('error');
+            // alert('error');
         });
+
+        $scope.logout=function () {
+            $cookieStore.remove("token");
+            window.location.href="/login.html";
+        }
 
     });
 
