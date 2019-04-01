@@ -430,7 +430,7 @@
             $scope.download = function (id) {
                 $http({
                     method:'get',
-                    url:'http://'+myHost+'/file/download/'+id+'?username=test',
+                    url:'http://'+myHost+'/file/download/'+id+'?conferenceId='+conferenceId,
                     responseType: 'blob',
                     headers:{
                         "Authorization":token,

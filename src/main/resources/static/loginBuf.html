@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body ng-app="loginBufApp" ng-controller="loginBufCtrl">
+<p>   </p>
+
+</body>
+<script src="webjars/angularjs/1.6.9/angular.js"></script>
+<script src="webjars/angularjs/1.6.9/angular-cookies.js"></script>
+<script src="assets/js/my.js"></script>
+<script>
+    var app=angular.module("loginBufApp",['ngCookies']);
+
+    app.controller("loginBufCtrl", function ($scope, $http, $cookieStore) {
+        var url = window.location.search;
+        var userRole = url.substr(1);
+        var token = $cookieStore.get('token');
+
+
+        $http({
+            method: 'GET',
+            url: 'http://'+myHost+'/loginBuf',
+            headers: {
+                "Authorization": token
+            }
+        }).then(function successCallback(reponse) {
+
+            $scope.user = reponse.data.data;
+            if($scope.user.role == userRole){
+                if(userRole == "user"){
+                    window.location.href="userInfo.html";
+                }
+                else if(userRole == "admin"){
+                    window.location.href="managerInfo.html";
+                }
+            }
+            else{
+                // alert('success');
+                alert("角色选择错误");
+                $cookieStore.remove('token');
+                window.location.href="login.html";
+            }
+
+        }, function errorCallback(reponse) {
+            $cookieStore.remove('token');
+            window.location.href = 'login.html';
+            // alert('error');
+            alert('角色选择错误');
+            // alert('error');
+
+        });
+
+    });
+
+</script>
+
+</html>

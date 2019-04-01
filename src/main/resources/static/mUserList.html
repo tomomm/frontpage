@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <![endif]-->
+    <title>CONFERENCE</title>
+    <!-- BOOTSTRAP CORE STYLE  -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- FONT AWESOME STYLE  -->
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- DATATABLE STYLE  -->
+    <link href="assets/js/dataTables/dataTables.bootstrap.css" rel="stylesheet" />
+    <!-- CUSTOM STYLE  -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <!-- GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+</head>
+<body ng-app="mUserListApp" ng-controller="mUserListCtrl" >
+<div class="navbar navbar-inverse set-radius-zero" >
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--<a class="navbar-brand" href="index.html">-->
+
+                <!--<img src="assets/img/logo.png" />-->
+            <!--</a>-->
+            <h1>学术会议系统<span ng-if="isLogin" ng-bind-template="欢迎您：管理员{{manager.name}}"></span></h1>
+        </div>
+
+        <div class="right-div">
+            <a href="login.html" ng-if="!isLogin" class="btn btn-info" ng-click="logout()">LOG IN</a>
+            <a ng-if="isLogin" class="btn btn-info" ng-click="logout()">LOG ME OUT</a>
+
+        </div>
+    </div>
+</div>
+<!-- LOGO HEADER END-->
+<section class="menu-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="navbar-collapse collapse ">
+                    <ul id="menu-top" class="nav navbar-nav navbar-right">
+                        <li><a href="mUserList.html" class="menu-top-active fa fa-home">用户</a></li>
+                        <li><a href="mConferenceList.html" class="fa fa-comments" >会议</a></li>
+                        <li><a href="mPaperList.html" class="fa fa-book" > 论文</a></li>
+                        <li><a href="managerInfo.html" class=" fa fa-user">个人中心</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- MENU SECTION END-->
+<div class="content-wrapper">
+    <div class="container">
+        <!--<div class="row pad-botm">-->
+            <!--<div class="col-md-12">-->
+                <!--<h4 class="header-line">TABLE EXAMPLES</h4>-->
+
+            <!--</div>-->
+
+        <!--</div>-->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Advanced Tables -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        会议
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table  class="table table-striped table-bordered table-hover" id="dataTables-examples">
+                                <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>用户邮箱</th>
+                                    <th>用户电话</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in users" class="odd gradeX">
+                                    <td ng-bind="x.name"></td>
+                                    <td ng-bind="x.email" type="date"></td>
+
+                                    <td ng-bind="x.phone"></td>
+                                    <td>
+                                        <button class="btn btn-sm" ng-click="deleteUser(x.name)">删除用户</button>
+                                    </td>
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!--End Advanced Tables -->
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- CONTENT-WRAPPER SECTION END-->
+<section class="footer-section">
+    <div class="container">
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--&copy; 2014 Yourdomain.com | More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></div>-->
+
+        <!--</div>-->
+    </div>
+</section>
+<!-- FOOTER SECTION END-->
+<!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+<!--<script src="/webjars/angularjs/1.7.7/angular.js"></script>-->
+<!--<script src="/webjars/angularjs/1.7.7/angular-cookies.js"></script>-->
+<script src="http://code.angularjs.org/1.6.9/angular.min.js"></script>
+<script src="https://code.angularjs.org/1.6.9/angular-cookies.js"></script>
+<script src="assets/js/my.js"></script>
+<script>
+    app = angular.module('mUserListApp',['ngCookies']);
+    app.controller('mUserListCtrl',function ($scope,$http,$cookieStore) {
+        var token=$cookieStore.get('token');
+        // alert("success");
+        // alert(token);
+        // function renderTime(date) {
+        //     var dateee = new Date(date).toJSON();
+        //     return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+        // }
+
+        $scope.isLogin = false;
+
+        $http({
+            method:'GET',
+            url: 'http://'+myHost+'/manager/simpleshow',
+            headers:{
+                "Authorization":token
+            }
+        }).then(function successCallback(reponse) {
+            // alert("success");
+
+            $scope.manager = reponse.data.data;
+            $scope.isLogin = true;
+        },function errorCallback(reponse) {
+
+            $scope.isLogin = false;
+            // window.location.href = 'login.html';
+            // alert('请先登录');
+            // alert('error');
+        });
+
+
+            $http({
+                method: 'GET',
+                url: 'http://'+myHost+'/manager/showusers',
+                headers:{
+                    "Authorization":token
+                }
+            }).then(function successCallback(reponse) {
+                // alert("success");
+                $scope.users = reponse.data.data;
+
+            }, function errorCallback(reponse) {
+                // alert('error');
+                // window.location.href = 'login.html';
+                // alert('请先登录');
+            });
+
+            $scope.logout = function () {
+                $cookieStore.remove("token");
+                window.location.href = "/login.html";
+            }
+
+        $scope.deleteUser=function(userId){
+            if (confirm("你确定要删除吗？")) {
+                $http({
+                    method: 'POST',
+                    url: 'http://'+myHost+'/manager/mDeleteUser/'+userId,
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(function successCallback(reponse) {
+                    if(reponse.data.msg =="删除失败"){
+                        alert("删除失败");
+
+                    }
+                    else if(reponse.data.httpStatus == "OK"){
+
+                        alert("删除成功");
+                        window.location.reload();
+                    }
+                    else if(reponse.data.msg == "你没有权限删除"){
+                        alert("你没有权限删除");
+                    }
+                }, function errorCallback(reponse) {
+                    alert('error');
+                });
+
+            }
+            else {
+
+            }
+        }
+
+
+
+        $scope.logout=function () {
+            $cookieStore.remove("token");
+            window.location.href="/login.html";
+        }
+
+    });
+</script>
+
+<!-- CORE JQUERY  -->
+
+
+<script src="assets/js/jquery-1.10.2.js"></script>
+<!-- BOOTSTRAP SCRIPTS  -->
+<script src="assets/js/bootstrap.js"></script>
+<!-- DATATABLE SCRIPTS  -->
+<script src="assets/js/dataTables/jquery.dataTables.js"></script>
+<script src="assets/js/dataTables/dataTables.bootstrap.js"></script>
+<!-- CUSTOM SCRIPTS  -->
+<script src="assets/js/custom.js"></script>
+</body>
+</html>

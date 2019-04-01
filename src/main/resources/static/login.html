@@ -95,8 +95,42 @@
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
 
-                        <a href="signup.html">注册</a>
-                        <a href="forgetPassword.html">忘记密码?</a>
+                    <div class="table-responsive">
+                        <table   border="0" id="dataTables-examples">
+
+                            <tbody>
+                            <tr  class="odd gradeX">
+                                <td><input id="RadioButtonList1_0" type="radio" ng-value="'user'" ng-model="radio" name="RadioButtonList1" value="普通用户" tabindex="4" ng-checked="true"/>
+                                    <label for="RadioButtonList1_0" >普通用户</label>
+                                <td><input id="RadioButtonList1_2" type="radio" ng-value="'admin'" ng-model="radio" name="RadioButtonList1" value="管理员" tabindex="4" />
+                                <label for="RadioButtonList1_0" >管理员</label>
+                            </tr>
+
+                            <tr>
+                                <td><a href="signup.html">注册</a></td>
+                                <td><a href="forgetPassword.html">忘记密码?</a></td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--<div class="form-group">-->
+                        <!--<div class="radio">-->
+                            <!--<label>-->
+                                <!--<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">用户-->
+                            <!--</label>-->
+                        <!--</div>-->
+                        <!--<div class="radio">-->
+                            <!--<label>-->
+                                <!--<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">管理员-->
+                            <!--</label>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                        <!--<a href="signup.html">注册</a>-->
+                        <!--<a href="forgetPassword.html">忘记密码?</a>-->
                     <div>
                         <button  ng-click="func()" class="btn btn-danger">Login </button>
                     </div>
@@ -126,43 +160,78 @@
 <script>
     var app = angular.module('loginApp',['ngCookies']);
     app.controller('loginCtrl',function($scope,$http,$cookies,$cookieStore) {
+        var token = $cookieStore.get('token');
+        $scope.radio = "user";
+        $http({
+            method:'GET',
+            url: 'http://'+myHost+'/user/simpleshow',
+            headers:{
+                "Authorization":token
+            }
+        }).then(function successCallback(reponse) {
+            // alert("success");
+            window.location.href="userInfo.html";
+            // $scope.user = reponse.data.data;
+            // $scope.isLogin = true;
+        },function errorCallback(reponse) {
+
+            // $scope.isLogin = false;
+            // window.location.href = 'login.html';
+            // alert('请先登录');
+            // alert('error');
+        });
+
         $scope.func=function() {
             var str2 = "http://localhost:8080/authentication/form?username=erwin&password=3231433"
 
             var str = "http://localhost:8080/authentication/form?username=test&password=123456"
 
-            $http({
-                method: "post",
-                url: "http://"+myHost+"/authentication/form?username="+$scope.username +"&password="+$scope.password,
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "Authorization": "Basic Y2xpZW50OjEyMzQ1Ng=="
-                }
-                /*
-                    body:{"username":"erwin",
-                            "password":"3231433"
-                    },
-                    headers:{
 
-                    "Content-Type":"application/x-www-form-urlencoded",
-                    "Authorization":"Basic Y2xpZW50OjEyMzQ1Ng=="
 
+            alert($scope.radio);
+
+
+                $http({
+                    method: "post",
+                    url: "http://"+myHost+"/authentication/form?username="+$scope.username +"&password="+$scope.password,
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": "Basic Y2xpZW50OjEyMzQ1Ng=="
                     }
-                    */
-            }).then(function successCallback(reponse) {
-                    alert(reponse.data.access_token);
-                    var token = "bearer " + reponse.data.access_token;
-                    $cookieStore.put('token', token, {
-                        expires: new Date(new Date().getTime() + 50000)
-                    });
-                    // alert("sss"+$cookieStore.get('token'))
-                    window.location.href = "userInfo.html"
+                    /*
+                        body:{"username":"erwin",
+                                "password":"3231433"
+                        },
+                        headers:{
 
-                },
-                function errorCallback(response) {
-                    // alert("error");
-                    alert(response.data.data);
-                });
+                        "Content-Type":"application/x-www-form-urlencoded",
+                        "Authorization":"Basic Y2xpZW50OjEyMzQ1Ng=="
+
+                        }
+                        */
+                }).then(function successCallback(reponse) {
+                        alert(reponse.data.access_token);
+                        var token = "bearer " + reponse.data.access_token;
+                        $cookieStore.put('token', token, {
+                            expires: new Date(new Date().getTime() + 50000)
+                        });
+                        // alert("sss"+$cookieStore.get('token'))
+
+                        window.location.href = "loginBuf.html?"+$scope.radio;
+                        // if($scope.radio == "user"){
+                        //     window.location.href = "userInfo.html"
+                        // }
+                        // else if($scope.radio == "manager") {
+                        //     window.location.href = "managerInfo.html"
+                        // }
+
+                    },
+                    function errorCallback(response) {
+                        // alert("error");
+                        alert(response.data.data);
+                    });
+
+
         }
 
     });

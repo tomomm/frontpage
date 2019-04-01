@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <![endif]-->
+    <title>PAPER</title>
+    <!-- BOOTSTRAP CORE STYLE  -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+    <!-- FONT AWESOME STYLE  -->
+    <link href="assets/css/font-awesome.css" rel="stylesheet" />
+    <!-- DATATABLE STYLE  -->
+    <link href="assets/js/dataTables/dataTables.bootstrap.css" rel="stylesheet" />
+    <!-- CUSTOM STYLE  -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <!-- GOOGLE FONT -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+
+</head>
+<body ng-app="paperListApp" ng-controller="paperListCtrl">
+<div class="navbar navbar-inverse set-radius-zero" >
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <!--<a class="navbar-brand" href="index.html">-->
+
+                <!--<img src="assets/img/logo.png" />-->
+            <!--</a>-->
+            <h1>学术会议系统欢迎您：管理员<span ng-bind="user.name"></span></h1>
+        </div>
+
+        <div class="right-div">
+            <a ng-if="isLogin" class="btn btn-info pull-right" ng-click="logout()">LOG ME OUT</a>
+            <a ng-if="!isLogin" href="login.html" class="btn btn-info pull-right">LOG IN</a>
+        </div>
+    </div>
+</div>
+<!-- LOGO HEADER END-->
+<section class="menu-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="navbar-collapse collapse ">
+                    <ul id="menu-top" class="nav navbar-nav navbar-right">
+                        <li><a href="mUserList.html" class="fa fa-home">用户</a></li>
+                        <li><a href="mConferenceList.html" class="fa fa-comments" >会议</a></li>
+                        <li><a href="mPaperList.html" class="menu-top-active fa fa-book" > 论文</a></li>
+                        <li><a href="managerInfo.html" class=" fa fa-user">个人中心</a></li>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- MENU SECTION END-->
+<div class="content-wrapper">
+    <div class="container">
+        <!--<div class="row pad-botm">-->
+            <!--<div class="col-md-12">-->
+                <!--<h4 class="header-line">TABLE EXAMPLES</h4>-->
+
+            <!--</div>-->
+
+        <!--</div>-->
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Advanced Tables -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        论文
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover" id="dataTables-examples">
+                                <thead>
+                                <tr>
+                                    <th>论文名称</th>
+                                    <th>论文作者</th>
+                                    <th>论文提交时间</th>
+                                    <th>论文所属会议</th>
+                                    <!--<th>论文附件</th>-->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="x in papers" class="odd gradeX">
+                                    <td ng-bind="x.paperTilte"></td>
+                                    <td ng-bind="x.userName"></td>
+                                    <td ng-bind="x.paperSubmitTime | date: 'yyyy-MM-dd HH:mm'"></td>
+                                    <td ng-bind="x.conferenceName"></td>
+                                    <!--<td ng-bind="x.paperFileName" class="center"></td>-->
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!--End Advanced Tables -->
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<!-- CONTENT-WRAPPER SECTION END-->
+<section class="footer-section">
+    <div class="container">
+        <!--<div class="row">-->
+            <!--<div class="col-md-12">-->
+                <!--&copy; 2014 Yourdomain.com | More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></div>-->
+
+        <!--</div>-->
+    </div>
+</section>
+<!-- FOOTER SECTION END-->
+<!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+
+<script src="http://code.angularjs.org/1.6.9/angular.min.js"></script>
+<script src="https://code.angularjs.org/1.6.9/angular-cookies.js"></script>
+<script src="assets/js/my.js"></script>
+<script>
+    app = angular.module('paperListApp',['ngCookies']);
+    app.controller('paperListCtrl',function ($scope,$http,$cookieStore) {
+        var token=$cookieStore.get('token');
+        $scope.isLogin = false;
+        // alert("success");
+        // alert(token);
+        $http({
+            method: 'GET',
+            url: 'http://'+myHost+'/manager/simpleshow',
+            headers: {
+                "Authorization": token
+            }
+        }).then(function successCallback(reponse) {
+
+            $scope.user = reponse.data.data;
+            $scope.isLogin = true;
+
+            // $scope.conference = $scope.user.conferenceSet;
+        }, function errorCallback(reponse) {
+            $scope.isLogin = false;
+            // window.location.href = 'login.html';
+            // alert('请先登录');
+            // alert('error');
+
+        });
+
+        $http({
+            method:'GET',
+            url: 'http://'+myHost+'/manager/showpapers',
+            headers:{
+                "Authorization":token
+            }
+        }).then(function successCallback(reponse) {
+            // alert("success");
+            $scope.papers = reponse.data.data;
+        },function errorCallback(reponse) {
+            // alert('error');
+        });
+
+        $scope.logout=function () {
+            $cookieStore.remove("token");
+            window.location.href="/login.html";
+        }
+
+    });
+</script>
+<!-- CORE JQUERY  -->
+
+
+<script src="assets/js/jquery-1.10.2.js"></script>
+<!-- BOOTSTRAP SCRIPTS  -->
+<script src="assets/js/bootstrap.js"></script>
+<!-- DATATABLE SCRIPTS  -->
+<script src="assets/js/dataTables/jquery.dataTables.js"></script>
+<script src="assets/js/dataTables/dataTables.bootstrap.js"></script>
+<!-- CUSTOM SCRIPTS  -->
+<script src="assets/js/custom.js"></script>
+</body>
+</html>
