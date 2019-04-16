@@ -19,6 +19,8 @@
     <link href="assets/css/style.css" rel="stylesheet" />
     <!-- GOOGLE FONT -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <link href="assets/css/blog.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
 
 </head>
 <body ng-app="homeApp" ng-controller="homeCtrl">
@@ -80,87 +82,34 @@
             <!--</div>-->
 
         <!--</div>-->
-        <div class="row">
-        <div class="col-md-8 col-sm-8 col-xs-12">
-            <div id="carousel-example" class="carousel slide slide-bdr" data-ride="carousel" >
 
-                <div class="carousel-inner">
-                    <div class="item active">
 
-                        <img src="assets/img/1.jpg" alt="" />
+    <div class="row">
 
-                    </div>
-                    <div class="item">
-                        <img src="assets/img/2.jpg" alt="" />
+        <div class="col-md-12">
+        <!--<div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">-->
+            <!--<div class="col-md-6 px-0">-->
+                <!--&lt;!&ndash;<h1 class="display-4 font-italic">Title of a longer featured blog post</h1>&ndash;&gt;-->
+                <!--<p class="lead my-3">欢迎来到学术会议系统.</p>-->
+                <!--&lt;!&ndash;<p class="lead mb-0"><a href="#" class="text-white font-weight-bold">Continue reading...</a></p>&ndash;&gt;-->
+            <!--</div>-->
+        <!--</div>-->
 
-                    </div>
-                    <div class="item">
-                        <img src="assets/img/3.jpg" alt="" />
-
-                    </div>
+            <!-- Main jumbotron for a primary marketing message or call to action -->
+            <div class="jumbotron">
+                <div class="container">
+                    <h1 class="display-3">欢迎来到学术会议系统</h1>
+                    <p>本学术会议系统具有基本的功能</p>
+                    <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>-->
                 </div>
-                <!--INDICATORS-->
-                <ol class="carousel-indicators">
-                    <li data-target="#carousel-example" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel-example" data-slide-to="1"></li>
-                    <li data-target="#carousel-example" data-slide-to="2"></li>
-                </ol>
-                <!--PREVIUS-NEXT BUTTONS-->
-                <a class="left carousel-control" href="#carousel-example" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                </a>
-                <a class="right carousel-control" href="#carousel-example" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                </a>
             </div>
-        </div>
-        </div>
+
 
         <!--<div class="copyrights">Collect from <a href="http://www.cssmoban.com/"  title="网站模板">网站模板</a></div>-->
 
-        <div class="row">
-        <div class="col-md-4 col-sm-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    Default Panel
-                </div>
-                <div class="panel-body">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
-                </div>
-                <div class="panel-footer">
-                    Panel Footer
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-4">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    Primary Panel
-                </div>
-                <div class="panel-body">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
-                </div>
-                <div class="panel-footer">
-                    Panel Footer
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-4">
-            <div class="panel panel-success">
-                <div class="panel-heading">
-                    Success Panel
-                </div>
-                <div class="panel-body">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
-                </div>
-                <div class="panel-footer">
-                    Panel Footer
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
 
+        </div>
+    </div>
 </div>
 <!-- CONTENT-WRAPPER SECTION END-->
 <section class="footer-section">
@@ -198,9 +147,7 @@
             // $scope.conference = $scope.user.conferenceSet;
 
         }, function errorCallback(reponse) {
-
             $scope.isLogin = false;
-
             // window.location.href = 'login.html';
             // alert('请先登录');
             // alert('error');

@@ -76,12 +76,33 @@
         <!--</div>-->
         <div class="row">
             <div class="col-md-6">
+
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 LOGIN
             </div>
             <div class="panel-body">
-                <form role="form">
+
+                <!--<nav class="nav nav-pills nav-justified">-->
+                    <!--<a class="flex-sm-fill text-sm-center nav-link active" href="#">用户密码登录</a>-->
+                    <!--<a class="flex-sm-fill text-sm-center nav-link" href="#">短信验证码登录</a>-->
+
+                <!--</nav>-->
+
+                <ul id="myTab" class="nav nav-tabs nav-tabs-justified">
+                    <li class="active">
+                        <a href="#password" data-toggle="tab">
+                            用户密码登录
+                        </a>
+                    </li>
+                    <li><a href="#smscode" data-toggle="tab">短信验证码登录</a></li>
+
+                </ul>
+
+                <div class="tab-content">
+
+                <form role="form" class="tab-pane fade in active" id="password" >
 
                     <div class="form-group">
                         <label>Enter Username</label>
@@ -135,6 +156,27 @@
                         <button  ng-click="func()" class="btn btn-danger">Login </button>
                     </div>
                 </form>
+
+                    <div class="tab-pane fade in" id="smscode">
+
+                            <div class="form-group">
+                                <label>Enter Phone</label>
+                                <input ng-model="phone" class="form-control" type="text" />
+                                <button class="btn btn-primary" ng-click="getSmsCode()">获取验证码</button>
+                                <!--<p class="help-block">Help text here.</p>-->
+                            </div>
+                            <div>
+                                <label>Enter code</label>
+                                <input ng-model="smscode" class="form-control" type="number" />
+                            </div>
+                            <hr/>
+                            <button class="btn btn-danger" ng-click="smsLogin()">login</button>
+
+                    </div>
+
+
+
+            </div>
             </div>
         </div>
         </div>
@@ -161,6 +203,16 @@
     var app = angular.module('loginApp',['ngCookies']);
     app.controller('loginCtrl',function($scope,$http,$cookies,$cookieStore) {
         var token = $cookieStore.get('token');
+
+        function guid() {
+            function S4() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+        }
+
+        var deviceId = guid();
+
         $scope.radio = "user";
         $http({
             method:'GET',
@@ -185,6 +237,7 @@
             var str2 = "http://localhost:8080/authentication/form?username=erwin&password=3231433"
 
             var str = "http://localhost:8080/authentication/form?username=test&password=123456"
+
 
 
 
@@ -232,6 +285,41 @@
                     });
 
 
+        }
+
+
+        $scope.getSmsCode=function () {
+            $http({
+                method:'get',
+                url: 'http://'+myHost+'/code/sms/'+deviceId+'?phone='+$scope.phone
+            }).then(function successCallback(reponse) {
+                alert("验证码已发送");
+                // $scope.confs = reponse.data.data;
+            },function errorCallback(reponse) {
+                alert('error');
+            });
+
+        };
+        
+        $scope.smsLogin = function () {
+            $http({
+                method:'post',
+                url: 'http://'+myHost+'/authentication/smsform'+'?smscode='+$scope.smscode+'&phone='+$scope.phone+'&deviceId='+deviceId,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Authorization": "Basic Y2xpZW50OjEyMzQ1Ng=="
+                }
+            }).then(function successCallback(reponse) {
+                alert("success");
+                var token = "bearer " + reponse.data.access_token;
+                $cookieStore.put('token', token, {
+                    expires: new Date(new Date().getTime() + 50000)
+                });
+                window.location.href="/userInfo.html";
+                // $scope.confs = reponse.data.data;
+            },function errorCallback(reponse) {
+                alert('error');
+            });
         }
 
     });

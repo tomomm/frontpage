@@ -76,48 +76,60 @@
             <div class="col-md-6">
         <div class="panel panel-info">
             <div class="panel-heading">
-                SING UP
+                SING UP （带<span style="color: red">*</span>的为必填项）
             </div>
             <div class="panel-body">
                 <form role="form" name="signupForm">
 
                     <div class="form-group">
-                        <label>Enter Email</label>
-                        <input class="form-control" type="email"  ng-model="myemail"/>
+                        <label>Enter Email<span style="color: red">*</span></label>
+                        <input class="form-control" name="email" type="email"  ng-model="myemail" required/>
+                        <!--<span ng-show="signupForm.email.$error.required" style="color: red">邮箱必填</span>-->
+                        <span ng-show="signupForm.email.$error.email" style="color: red">非法的邮箱</span>
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
-                        <label>Enter Username</label>
-                        <input class="form-control" type="text"  ng-model="username"/>
+                        <label>Enter Username<span style="color: red">*</span></label>
+                        <input class="form-control" type="text" name="username" ng-model="username" required/>
+                        <!--<span ng-show="signupForm.username.$error.required" style="color: red">用户名必填</span>-->
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
-                        <label>Enter Phone</label>
-                        <input class="form-control" type="text"  ng-model="phone"/>
-                        <button class="btn btn-success" ng-click="getSmsCode()">获取验证码</button>
+                        <label>Enter Phone<span style="color: red">*</span></label>
+                        <input name="phone" class="form-control" type="text"  ng-model="phone" required/>
+                        <!--<p ng-show="signupForm.phone.$error.required" style="color: red">电话号码必填</p>-->
+                        <button ng-disabled="signupForm.phone.$invalid" class="btn btn-success" ng-click="getSmsCode()">获取验证码</button>
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
-                        <label>Enter 验证码</label>
-                        <input class="form-control" type="text"  ng-model="sms"/>
+                        <label>Enter 短信验证码<span style="color: red">*</span></label>
+                        <input class="form-control" name="sms" type="text"  ng-model="sms" required/>
+                        <!--<span ng-show="signupForm.sms.$error.required" style="color: red">短信验证码必填</span>-->
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
-                        <label>Enter Password</label>
-                        <input class="form-control" type="password" ng-model="password" name="password" id="pwd" required/>
+                        <label>Enter Password<span style="color: red">*</span></label>
+                        <input ng-minlength="6" class="form-control" type="password" ng-model="password" name="password" id="pwd" required/>
                         <!--<p class="help-block">Help text here.</p>-->
-                        <!--<span style="color:red" ng-show="myValue">密码是必须的.</span>-->
+                        <!--<span style="color:red" ng-show="signupForm.password.$error.required">密码是必须的.</span>-->
+                        <!--<span ng-show="signupForm.password.$error.required" style="color: red">密码必填</span>-->
+                        <span style="color:red" ng-show="signupForm.password.$error.minlength">密码至少6位.</span>
                     </div>
                     <div>
-                        <label>Re Type Password </label>
-                        <input class="form-control"  type="password" ng-model="repassword" name="repassword" id="pwd2" required/>
-                        <span ng-show="repassword!=password" style="color:red">两次输入的密码不相同.</span>
+                        <label>Re Type Password<span style="color: red">*</span> </label>
+                        <input ng-minlength="6" class="form-control"  type="password" ng-model="repassword" name="repassword" id="pwd2" required/>
+                        <!--<span ng-show="signupForm.repassword.$error.required" style="color: red">重复密码必填</span>-->
+                        <span ng-show="(signupForm.repassword.$error.minlength || repassword!=password)" style="color:red">两次输入的密码不相同.</span>
                         <!--<span style="color:red" ng-show="signupForm.password.$error.required">两侧输入的密码不相同.</span>-->
                     </div>
 
                     <hr/>
                     <div>
-                        <button ng-click="signup()" class="btn btn-danger">Register Now </button>
+                        <button ng-disabled="signupForm.email.$invalid || signupForm.username.$invalid ||
+                        signupForm.phone.$invalid||signupForm.sms.$invalid || signupForm.password.$invalid ||
+                         signupForm.repassword.$invalid" ng-click="signup()" class="btn btn-danger">
+                            Register Now
+                        </button>
                     </div>
                 </form>
             </div>
@@ -131,8 +143,8 @@
 <section class="footer-section">
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
-                &copy; 2014 Yourdomain.com | More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></div>
+            <!--<div class="col-md-12">-->
+                <!--&copy; 2014 Yourdomain.com | More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></div>-->
 
         </div>
     </div>
@@ -160,12 +172,21 @@
         // var token=$cookieStore.get('token');
         // alert("success");
         // alert(token);
+        function guid() {
+            function S4() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+        }
+
+        var deviceId = guid();
+
         $scope.myValue={};
         $scope.signup=function() {
             if($scope.username &&$scope.password&&$scope.phone && $scope.myemail && $scope.repassword && $scope.sms){
                 $http({
                     method: 'post',
-                    url: 'http://'+myHost+'/user/signup?smscode='+$scope.sms,
+                    url: 'http://'+myHost+'/user/signup?smscode='+$scope.sms+'&deviceId='+diviceId,
                     headers:{
                         "Content-Type":"application/json;charset=UTF-8"
                     },
@@ -176,8 +197,23 @@
                         "email": $scope.myemail
                     }
                 }).then(function successCallback(reponse) {
-                    alert("success");
-                    window.location.href="login.html";
+
+                    if(reponse.data.msg == "用户名已经存在"){
+                        alert("用户名已经存在");
+                    }
+                    else if(reponse.data.msg == "邮箱已经存在"){
+                        alert("邮箱已经存在");
+                    }
+                    else if(reponse.data.msg == "电话已经存在"){
+                        alert("电话已经存在");
+                    }
+                    else if(response.data.msg == "failure"){
+                        alert(reponse.data.content.toSource);
+                    }
+                    else {
+                        alert("success");
+                        window.location.href = "login.html";
+                    }
                 }, function errorCallback(reponse) {
                     alert('error');
                 });
@@ -191,9 +227,9 @@
         $scope.getSmsCode=function () {
             $http({
                 method:'get',
-                url: 'http://'+myHost+'/code/sms/123156456?phone='+$scope.phone
+                url: 'http://'+myHost+'/code/sms/'+deviceId+'?phone='+$scope.phone
             }).then(function successCallback(reponse) {
-                alert("success");
+                alert("验证码已发送");
                 // $scope.confs = reponse.data.data;
             },function errorCallback(reponse) {
                 alert('error');

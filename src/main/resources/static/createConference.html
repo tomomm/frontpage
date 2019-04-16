@@ -78,19 +78,21 @@
             <div class="col-md-6">
         <div class="panel panel-info">
             <div class="panel-heading">
-                CREATE CONFERENCE
+                CREATE CONFERENCE （带<span style="color: red">*</span>的为必填项）
             </div>
             <div class="panel-body">
-                <form role="form" name="signupForm">
+                <form role="form" name="ccForm">
 
                     <div class="form-group">
-                        <label>Enter Conference Name</label>
-                        <input class="form-control" type="text"  ng-model="confName"/>
+                        <label>Enter Conference Name <span style="color: red">*</span></label>
+                        <input class="form-control" type="text" name="confName" ng-model="confName" required/>
+
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
-                        <label>Enter Conference Adress</label>
-                        <input class="form-control" type="text"  ng-model="confAddr"/>
+                        <label>Enter Conference Adress<span style="color: red">*</span></label>
+                        <input class="form-control" type="text" name="confAddr" ng-model="confAddr" required/>
+                        <!--<span ng-show="ccForm.confAddr.$error.required" style="color: red">会议地点必填</span>-->
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <!--<div class="form-group">-->
@@ -99,24 +101,28 @@
                         <!--&lt;!&ndash;<p class="help-block">Help text here.</p>&ndash;&gt;-->
                     <!--</div>-->
                     <div class="form-group">
-                        <label>Enter Contact Name</label>
-                        <input class="form-control" type="text"  ng-model="contName"/>
+                        <label>Enter Contact Name<span style="color: red">*</span></label>
+                        <input class="form-control" type="text" name="contName" ng-model="contName" required/>
+                        <!--<span ng-show="ccForm.contName.$error.required" style="color: red">会议联系人必填</span>-->
                         <!--<p class="help-block">Help text here.</p>-->
                     </div>
                     <div class="form-group">
-                        <label>Enter Contact Email</label>
-                        <input class="form-control" type="email" ng-model="contEmail" required/>
+                        <label>Enter Contact Email<span style="color: red">*</span></label>
+                        <input class="form-control" type="email" name="contEmail" ng-model="contEmail" required/>
+                        <!--<span ng-show="ccForm.contEmail.$error.required" style="color: red">会议联系邮箱必填</span>-->
                         <!--<p class="help-block">Help text here.</p>-->
                         <!--<span style="color:red" ng-show="myValue">密码是必须的.</span>-->
                     </div>
                     <div>
-                        <label>Enter Contact Phone</label>
-                        <input class="form-control"  type="text" ng-model="contPhone"  required/>
+                        <label>Enter Contact Phone<span style="color: red">*</span></label>
+                        <input class="form-control"  type="text" name="contPhone" ng-model="contPhone"  required/>
+                        <!--<span ng-show="ccForm.contPhone.$error.required" style="color: red">会议联系电话必填</span>-->
                         <!--<span style="color:red" ng-show="signupForm.password.$error.required">两侧输入的密码不相同.</span>-->
                     </div>
                     <div>
-                        <label>Enter Description</label>
-                        <textarea class="form-control"  type="text" ng-model="description" rows="3" required></textarea>
+                        <label>Enter Description<span style="color: red">*</span></label>
+                        <textarea class="form-control"  type="text" name="description" ng-model="description" rows="3" required></textarea>
+                        <!--<span ng-show="ccForm.description.$error.required" style="color: red">会议描述必填</span>-->
                         <!--<span style="color:red" ng-show="signupForm.password.$error.required">两侧输入的密码不相同.</span>-->
 
                         <hr/>
@@ -182,7 +188,7 @@
         });
 
         $scope.createConf=function() {
-            var createDate = new Date();
+            // var createDate = new Date();
             $http({
                 method: 'post',
                 url: 'http://'+myHost+'/conference/create',
@@ -193,7 +199,7 @@
                     "name": $scope.confName,
                     "address": $scope.confAddr,
                     "createName":$scope.user.name,
-                    "date":createDate,
+                    // "date":createDate,
                     "description":$scope.description,
                     "contactName":$scope.contName,
                     "contactEmail":$scope.contEmail,
